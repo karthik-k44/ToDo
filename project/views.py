@@ -17,6 +17,16 @@ def signin_required(fn):
             return fn(request,*args, **kwargs)
     return wrapper
 
+def mylogin(fn):
+    def wrapper(request,*args, **kwargs):
+        id=kwargs.get(pk)
+        obj=Task.objects.filter(id=id)
+        if obj.user != request.user:
+            return redirect("login")
+        else:
+            return fn(request,*args, **kwargs)
+    return wrapper
+
 class RegisterView(View):
     def get(self, request):
         form = register()
@@ -52,8 +62,9 @@ class LoginView(View):
         else:
             print("...")
         return render(request,"login.html",{"form":form})
-    
-@method_decorator(signin_required, name="dispatch")
+
+decs=[signin_required,mylogin]
+@method_decorator(decs, name="dispatch")
 class TaskView(View):
     def get(self,request):
         form=TaskForm()
