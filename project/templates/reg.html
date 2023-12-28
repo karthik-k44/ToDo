@@ -1,0 +1,19 @@
+ {% extends 'base.html' %}
+
+ 
+ {% block body %}
+   <form action="" method="post">
+      {% csrf_token %}
+      {{form.as_p}}
+      <button type="submit"> Submit</button>
+   </form>
+   {% for i in messages%}
+
+   <div class="alert alert-warning alert-dismissible fade show" role="alert">
+       <strong>{{i}}</strong> You should check in on some of those fields below.
+       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+     </div>
+   {% endfor %}
+   
+ {% endblock body %}
+    

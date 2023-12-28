@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+
+{% block body %}
+<center>
+<div class="container" style="background-color: aquamarine;">
+    <h1>LOGIN...</h1>
+    <form action="" method="post">
+        {% csrf_token %}
+        {{form.as_p}}
+        <button type="submit">Submit</button>
+    </form>
+</div>
+</center>
+{% endblock body %}
+    
