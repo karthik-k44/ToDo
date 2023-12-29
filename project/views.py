@@ -19,10 +19,10 @@ def signin_required(fn):
 
 def mylogin(fn):
     def wrapper(request,*args, **kwargs):
-        id=kwargs.get(pk)
-        obj=Task.objects.filter(id=id)
-        if obj.user != request.user:
-            return redirect("login")
+        id=kwargs.get("pk")
+        obj=Task.objects.get(id=id)
+        if obj.user!=request.user:
+            return redirect("Login")
         else:
             return fn(request,*args, **kwargs)
     return wrapper
@@ -39,7 +39,7 @@ class RegisterView(View):
             messages.success(request,"added successfully")
             
         form=register()
-        return redirect("login")
+        return redirect("Login")
         
 class LoginView(View):
     def get(self,request,*args, **kwargs):
@@ -63,8 +63,7 @@ class LoginView(View):
             print("...")
         return render(request,"login.html",{"form":form})
 
-decs=[signin_required,mylogin]
-@method_decorator(decs, name="dispatch")
+@method_decorator(signin_required, name="dispatch")
 class TaskView(View):
     def get(self,request):
         form=TaskForm()
@@ -78,18 +77,26 @@ class TaskView(View):
         data=Task.objects.filter(user=request.user)
         return render(request, "task.html", {"form":form,"data":data})
 
+@method_decorator(mylogin, name="dispatch")
 class Taskedit(View):
     def get(self,request,*args, **kwargs):
         id=kwargs.get("pk")
         Task.objects.filter(id=id).update(complete=True)
         return redirect("home")
-    
+
+@method_decorator(mylogin, name="dispatch")  
 class Taskdelete(View):
     def get(self,request,*args, **kwargs):
         id=kwargs.get("pk")
         Task.objects.filter(id=id).delete()
         return redirect("home")
     
+class Userdel(View):
+    def get(self,request,*args, **kwargs):
+        id=kwargs.get("pk")
+        User.objects.get(id=id).delete()
+        return redirect("Login")
+
 class LogoutView(View):
     def get(self,request,*args, **kwargs):
         logout(request)
